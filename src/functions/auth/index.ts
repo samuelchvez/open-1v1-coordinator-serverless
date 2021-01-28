@@ -1,0 +1,1 @@
+export { default as rs256Auth0Authorizer } from './rs256Auth0Authorizer';

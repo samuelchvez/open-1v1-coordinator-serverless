@@ -2,7 +2,10 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@libs/*": ["src/libs/*"]
+      "@libs/*": ["src/libs/*"],
+      "@models/*": ["src/models/*"],
+      "@models": ["src/models/index.ts"],
+      "@dataLayer/*": ["src/dataLayer/*"]
     }
   }
 }
