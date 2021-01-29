@@ -29,22 +29,24 @@ const handler: ValidatedAPIGatewayProxyEvent<typeof schema> = async event => {
       status: fromTournamentModel.STATUS.created,
     });
 
-    logger.info('Completed request', event);
+    logger.info(
+      'Completed request',
+      { tournament: newTournament }
+    );
 
     return {
       statusCode: 201,
       body: JSON.stringify(newTournament),
     };
   } catch (error) {
-    logger.info('Failed request', { error: error.message });
+    logger.info('Failed request', { error });
   
     return {
       statusCode: 403,
       body: error.message,
     };
   }
-
-
 }
+
 
 export const main = commonRestMiddleware(handler);

@@ -2,7 +2,8 @@ export default {
   type: 'object',
   properties: {
     nickname: {
-      type: 'string'
+      type: 'string',
+      minLength: 2,
     },
   },
   required: ['nickname'],

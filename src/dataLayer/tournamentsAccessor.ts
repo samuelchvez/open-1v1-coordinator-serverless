@@ -23,20 +23,17 @@ export class TournamentsAccessor {
       { tournamentId },
     );
 
-    try {
-      const result: any = await this.docClient.get({
-        TableName: this.tournamentsTable,
-        Key: { tournamentId },
-      }).promise();
-  
-      return result as Tournament;
-    } catch (e) {
-      logger.error('Tournament not found', JSON.stringify(e));
+    const { Item }: any = await this.docClient.get({
+      TableName: this.tournamentsTable,
+      Key: { tournamentId },
+    }).promise();
 
-      throw new Error('Tournament not found');
+    if (Item) {
+      return Item as Tournament;
     }
 
-
+    logger.error('Tournament not found');
+    throw new Error('Tournament not found');
   }
 
   async getTournamentsByStatus(status: string): Promise<Tournament[]> {
@@ -93,11 +90,40 @@ export class TournamentsAccessor {
       logger.info('Tournament created');
   
       return tournament;
-    } catch (e) {
+    } catch (error) {
+      logger.error('Tournament could not be created', { error });
 
-      logger.error(`Tournament could not be created: ${JSON.stringify(e)}`);
+      throw error;
+    }
+  }
 
-      throw e;
+  async updateTournamentStatus(tournamentId: string, status: string): Promise<Tournament> {
+    logger.info(
+      'Changing Tournament Status',
+      { tournamentId, status },
+    );
+
+    try {
+      const { Attributes } = await this.docClient.update({
+        TableName: this.tournamentsTable,
+        Key: { tournamentId },
+        UpdateExpression: 'set #st = :st',
+        ExpressionAttributeValues: {
+          ':st': status,
+        },
+        ExpressionAttributeNames: {
+          '#st': 'status',
+        },
+        ReturnValues: 'ALL_NEW',
+      }).promise();
+
+      logger.info('Tournament status successfully updated');
+
+      return Attributes as Tournament;
+    } catch (error) {
+      logger.error('Tournament status could not be updated', { error });
+
+      throw error;
     }
   }
 }

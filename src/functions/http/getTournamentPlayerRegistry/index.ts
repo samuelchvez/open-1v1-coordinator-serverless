@@ -1,13 +1,10 @@
-import schema from './schema';
-
-
 export default {
   handler: `${__dirname.split(process.cwd())[1].substring(1)}/handler.main`,
   iamRoleStatements: [
     {
       Effect: 'Allow',
       Action: [
-        'dynamodb:PutItem',
+        'dynamodb:GetItem',
       ],
       Resource: 'arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TOURNAMENT_PLAYERS_TABLE_NAME}',
     },
@@ -15,16 +12,11 @@ export default {
   events: [
     {
       http: {
-        method: 'post',
+        method: 'get',
         path: 'tournament-player-registries/{tournamentId}',
         authorizer: 'rs256Auth0Authorizer',
         cors: true,
-        request: {
-          schema: {
-            'application/json': schema,
-          },
-        },
-      },
-    },
-  ],
+      }
+    }
+  ]
 }

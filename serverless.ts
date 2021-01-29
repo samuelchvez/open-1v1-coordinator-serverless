@@ -7,7 +7,7 @@ import {
   createTournament,
   getTournamentPlayersData,
   registerPlayerToTournament,
-  unregisterPlayerFromTournament,
+  // unregisterPlayerFromTournament,
   openTournament,
   startTournament,
 } from './src/functions/http';
@@ -67,7 +67,7 @@ const serverlessConfiguration: AWS = {
     createTournament,
     getTournamentPlayersData,
     registerPlayerToTournament,
-    unregisterPlayerFromTournament,
+    // unregisterPlayerFromTournament,
     openTournament,
     connect,
     startTournament,

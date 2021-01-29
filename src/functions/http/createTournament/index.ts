@@ -1,3 +1,6 @@
+import schema from './schema';
+
+
 export default {
   handler: `${__dirname.split(process.cwd())[1].substring(1)}/handler.main`,
   iamRoleStatements: [
@@ -14,7 +17,14 @@ export default {
       http: {
         method: 'post',
         path: 'tournaments',
-      }
-    }
-  ]
+        authorizer: 'rs256Auth0Authorizer',
+        cors: true,
+        request: {
+          schema: {
+            'application/json': schema,
+          },
+        },
+      },
+    },
+  ],
 }

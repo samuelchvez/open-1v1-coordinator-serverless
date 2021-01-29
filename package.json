@@ -11,6 +11,7 @@
     "@middy/http-cors": "^2.0.0-alpha.2",
     "@middy/http-json-body-parser": "^1.5.0",
     "aws-xray-sdk": "^3.2.0",
+    "bcryptjs": "^2.4.3",
     "jsonwebtoken": "^8.5.1",
     "source-map-support": "^0.5.19",
     "uuid": "^8.3.2",
@@ -19,6 +20,7 @@
   "devDependencies": {
     "@serverless/typescript": "^2.16.0",
     "@types/aws-lambda": "^8.10.64",
+    "@types/bcryptjs": "^2.4.2",
     "@types/node": "^14.14.6",
     "fork-ts-checker-webpack-plugin": "^6.0.0",
     "json-schema-to-ts": "^1.4.1",

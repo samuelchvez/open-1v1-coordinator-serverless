@@ -80,11 +80,10 @@ export class UsersAccessor {
       logger.info('User created');
   
       return user;
-    } catch (e) {
+    } catch (error) {
+      logger.error('User could not be created', { error });
 
-      logger.error(`User could not be created: ${JSON.stringify(e)}`);
-
-      throw e;
+      throw error;
     }
 
   }
@@ -107,10 +106,10 @@ export class UsersAccessor {
       }).promise();
 
       logger.info('User successfully updated');
-    } catch (e) {
-      logger.error(`User could not be updated: ${JSON.stringify(e)}`);
+    } catch (error) {
+      logger.error('User could not be updated', { error });
 
-      throw e;
+      throw error;
     }
   }
 }

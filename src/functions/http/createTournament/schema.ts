@@ -2,13 +2,17 @@ export default {
   type: 'object',
   properties: {
     title: {
-      type: 'string'
+      type: 'string',
+      minLength: 3,
     },
     gameId: {
       type: 'string',
     },
+    rounds: {
+      type: 'number',
+    },
   },
-  required: ['title', 'gameId'],
+  required: ['title', 'gameId', 'rounds'],
   additionalProperties: false,
 } as const;
 
