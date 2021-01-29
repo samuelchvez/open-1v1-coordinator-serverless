@@ -1,14 +1,14 @@
 import 'source-map-support/register';
 
-import type { ValidatedEventAPIGatewayProxyEvent } from '@libs/apiGateway';
-import { middyfy } from '@libs/lambda';
+import type { ValidatedAPIGatewayProxyEvent } from '@libs/apiGateway';
+import { commonRestMiddleware } from '@libs/lambda';
 
 
-const handler: ValidatedEventAPIGatewayProxyEvent<any> = async (_event) => {
+const handler: ValidatedAPIGatewayProxyEvent<any> = async (_event) => {
   return {
     statusCode: 200,
     body: '',
   };
 }
 
-export const main = middyfy(handler);
+export const main = commonRestMiddleware(handler);

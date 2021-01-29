@@ -1,4 +1,6 @@
+export { default as getUser } from './getUser';
 export { default as createUser } from './createUser';
+export { default as getTournaments } from './getTournaments';
 export { default as createTournament } from './createTournament';
 export { default as getTournamentPlayersData } from './getTournamentPlayersData';
 export { default as registerPlayerToTournament } from './registerPlayerToTournament';

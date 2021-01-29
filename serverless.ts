@@ -1,7 +1,9 @@
 import type { AWS } from '@serverless/typescript';
 
 import {
+  getUser,
   createUser,
+  getTournaments,
   createTournament,
   getTournamentPlayersData,
   registerPlayerToTournament,
@@ -19,7 +21,7 @@ import { rs256Auth0Authorizer } from './src/functions/auth';
 
 
 const serverlessConfiguration: AWS = {
-  service: 'open-1v1-coordinator-serverless',
+  service: 'tournaments',
   frameworkVersion: '2',
   custom: {
     webpack: {
@@ -27,7 +29,10 @@ const serverlessConfiguration: AWS = {
       includeModules: true
     }
   },
-  plugins: ['serverless-webpack'],
+  plugins: [
+    'serverless-webpack',
+    'serverless-iam-roles-per-function',
+  ],
   provider: {
     name: 'aws',
     runtime: 'nodejs12.x',
@@ -56,7 +61,9 @@ const serverlessConfiguration: AWS = {
     lambdaHashingVersion: '20201221',
   },
   functions: {
+    getUser,
     createUser,
+    getTournaments,
     createTournament,
     getTournamentPlayersData,
     registerPlayerToTournament,
@@ -116,7 +123,7 @@ const serverlessConfiguration: AWS = {
                 },
               ],
               Projection: {
-                ProjectionType: 'KEYS_ONLY',
+                ProjectionType: 'ALL',
               },
             },
           ],
@@ -184,7 +191,7 @@ const serverlessConfiguration: AWS = {
                 },
               ],
               Projection: {
-                ProjectionType: 'KEYS_ONLY',
+                ProjectionType: 'ALL',
               },
             },
             {
@@ -200,7 +207,7 @@ const serverlessConfiguration: AWS = {
                 },
               ],
               Projection: {
-                ProjectionType: 'KEYS_ONLY',
+                ProjectionType: 'ALL',
               },
             },
           ],
@@ -253,7 +260,7 @@ const serverlessConfiguration: AWS = {
                 },
               ],
               Projection: {
-                ProjectionType: 'KEYS_ONLY',
+                ProjectionType: 'ALL',
               },
             },
           ],
@@ -271,7 +278,7 @@ const serverlessConfiguration: AWS = {
                 },
               ],
               Projection: {
-                ProjectionType: 'KEYS_ONLY',
+                ProjectionType: 'ALL',
               },
             },
             {
@@ -287,7 +294,7 @@ const serverlessConfiguration: AWS = {
                 },
               ],
               Projection: {
-                ProjectionType: 'KEYS_ONLY',
+                ProjectionType: 'ALL',
               },
             },
           ],
@@ -344,7 +351,7 @@ const serverlessConfiguration: AWS = {
                 },
               ],
               Projection: {
-                ProjectionType: 'KEYS_ONLY',
+                ProjectionType: 'ALL',
               },
             },
             {
@@ -360,7 +367,7 @@ const serverlessConfiguration: AWS = {
                 },
               ],
               Projection: {
-                ProjectionType: 'KEYS_ONLY',
+                ProjectionType: 'ALL',
               },
             },
           ],

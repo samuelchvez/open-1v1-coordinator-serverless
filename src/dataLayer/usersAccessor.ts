@@ -22,20 +22,18 @@ export class UsersAccessor {
       { userId },
     );
 
-    const result = await this.docClient.query({
+    const { Item }: any = await this.docClient.get({
       TableName: this.usersTable,
-      KeyConditionExpression: 'userId = :userId',
-      ExpressionAttributeValues: {
-        ':userId': userId,
-      },
+      Key: { userId },
     }).promise();
 
-    if (result.Count !== 0) {
-      return result.Items[0] as User;
+    if (Item) {
+      logger.info('Successfully fetched user', Item);
+
+      return Item as User;
     }
 
     logger.error('User not found');
-
     throw new Error('User not found');
   }
 
@@ -55,7 +53,11 @@ export class UsersAccessor {
     }).promise();
 
     if (result.Count !== 0) {
-      return result.Items[0] as User;
+      const user = result.Items[0] as User;
+
+      logger.info('Successfully fetched user', user);
+
+      return user;
     }
 
     logger.error('User connection not found');
@@ -99,11 +101,12 @@ export class UsersAccessor {
         Key: { userId },
         UpdateExpression: 'set connectionId = :connectionId',
         ExpressionAttributeValues: {
-          ':userId': userId,
           ':connectionId': connectionId,
         },
         ReturnValues: 'NONE',
       }).promise();
+
+      logger.info('User successfully updated');
     } catch (e) {
       logger.error(`User could not be updated: ${JSON.stringify(e)}`);
 

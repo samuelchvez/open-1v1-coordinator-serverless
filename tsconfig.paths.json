@@ -5,7 +5,8 @@
       "@libs/*": ["src/libs/*"],
       "@models/*": ["src/models/*"],
       "@models": ["src/models/index.ts"],
-      "@dataLayer/*": ["src/dataLayer/*"]
+      "@dataLayer/*": ["src/dataLayer/*"],
+      "@auth/*": ["src/functions/auth/*"]
     }
   }
 }

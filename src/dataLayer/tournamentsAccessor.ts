@@ -5,7 +5,7 @@ import { createLogger } from '@libs/logger';
 import { Tournament } from '@models';
 
 
-const logger = createLogger('userAccessor');
+const logger = createLogger('tournamentsAccessor');
 const AWSXRay = require('aws-xray-sdk');
 const XAWS = AWSXRay.captureAWS(AWS);
 
@@ -23,21 +23,20 @@ export class TournamentsAccessor {
       { tournamentId },
     );
 
-    const result = await this.docClient.query({
-      TableName: this.tournamentsTable,
-      KeyConditionExpression: 'tournamentId = :tournamentId',
-      ExpressionAttributeValues: {
-        ':tournamentId': tournamentId,
-      },
-    }).promise();
+    try {
+      const result: any = await this.docClient.get({
+        TableName: this.tournamentsTable,
+        Key: { tournamentId },
+      }).promise();
+  
+      return result as Tournament;
+    } catch (e) {
+      logger.error('Tournament not found', JSON.stringify(e));
 
-    if (result.Count !== 0) {
-      return result.Items[0] as Tournament;
+      throw new Error('Tournament not found');
     }
 
-    logger.error('Tournament not found');
 
-    throw new Error('Tournament not found');
   }
 
   async getTournamentsByStatus(status: string): Promise<Tournament[]> {
@@ -49,9 +48,12 @@ export class TournamentsAccessor {
     const result = await this.docClient.query({
       TableName: this.tournamentsTable,
       IndexName: this.tournamentStatusIndex,
-      KeyConditionExpression: 'status = :status',
+      KeyConditionExpression: '#st = :st',
       ExpressionAttributeValues: {
-        ':status': status,
+        ':st': status,
+      },
+      ExpressionAttributeNames: {
+        '#st': 'status',
       },
     }).promise();
 
