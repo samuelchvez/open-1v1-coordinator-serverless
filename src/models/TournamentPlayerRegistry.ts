@@ -9,8 +9,7 @@ export default interface TournamentPlayerRegistry {
 };
 
 export const STATUS = {
-  offline: 'OFFLINE',
-  online: 'ONLINE',
+  unknown: 'UNKNOWN',
   ready: 'READY',
   inMatch: 'IN_MATCH',
 };

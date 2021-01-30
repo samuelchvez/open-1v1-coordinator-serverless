@@ -29,7 +29,7 @@ const handler: ValidatedAPIGatewayProxyEvent<any> = async event => {
         body: JSON.stringify(user),
       };
     } catch(error) {
-      logger.info('Failed request', { error });
+      logger.error('Failed request', { error });
 
       return {
         statusCode: 404,
@@ -40,7 +40,7 @@ const handler: ValidatedAPIGatewayProxyEvent<any> = async event => {
     }
   }
 
-  logger.info('Failed request', { requestUserId, userId });
+  logger.error('Failed request', { requestUserId, userId });
 
   return {
     statusCode: 403,

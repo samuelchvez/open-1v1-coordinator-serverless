@@ -39,7 +39,7 @@ const handler: ValidatedAPIGatewayProxyEvent<typeof schema> = async event => {
       body: JSON.stringify(newTournament),
     };
   } catch (error) {
-    logger.info('Failed request', { error });
+    logger.error('Failed request', { error });
   
     return {
       statusCode: 403,

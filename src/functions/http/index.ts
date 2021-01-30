@@ -1,8 +1,10 @@
 export { default as getUser } from './getUser';
 export { default as createUser } from './createUser';
+export { default as getTournament } from './getTournament';
 export { default as getTournaments } from './getTournaments';
 export { default as createTournament } from './createTournament';
-export { default as getTournamentPlayersData } from './getTournamentPlayerRegistry';
+export { default as getTournamentPlayerRegistry } from './getTournamentPlayerRegistry';
+export { default as getTournamentPlayersRegistryByPasskey } from './getTournamentPlayerRegistryByPasskey';
 export { default as registerPlayerToTournament } from './registerPlayerToTournament';
 // export { default as unregisterPlayerFromTournament } from './unregisterPlayerFromTournament';
 export { default as openTournament } from './openTournament';

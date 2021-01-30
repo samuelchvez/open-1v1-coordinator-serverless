@@ -15,6 +15,7 @@ export default {
       http: {
         method: 'patch',
         path: 'tournaments/{tournamentId}/open',
+        cors: true,
       }
     }
   ]

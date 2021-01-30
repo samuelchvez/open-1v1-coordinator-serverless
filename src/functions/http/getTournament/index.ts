@@ -4,19 +4,19 @@ export default {
     {
       Effect: 'Allow',
       Action: [
-        'dynamodb:PutItem',
+        'dynamodb:GetItem',
       ],
-      Resource: 'arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TOURNAMENT_PLAYERS_TABLE_NAME}',
+      Resource: 'arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TOURNAMENTS_TABLE_NAME}',
     },
   ],
   events: [
     {
       http: {
-        method: 'post',
-        path: 'tournament-player-registries/{tournamentId}',
+        method: 'get',
         authorizer: 'rs256Auth0Authorizer',
         cors: true,
-      },
-    },
-  ],
+        path: 'tournaments/{tournamentId}',
+      }
+    }
+  ]
 }

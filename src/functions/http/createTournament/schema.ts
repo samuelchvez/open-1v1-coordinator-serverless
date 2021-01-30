@@ -1,3 +1,5 @@
+// TODO: handle rules (matching schema, rounds)
+
 export default {
   type: 'object',
   properties: {

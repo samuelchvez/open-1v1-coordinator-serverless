@@ -43,7 +43,7 @@ const handler: ValidatedAPIGatewayProxyEvent<void> = async event => {
       throw new Error('Users can only open their own tournaments. Also, tournaments should be in CREATED status');
     }
   } catch (error) {
-    logger.info('Failed request', { error });
+    logger.error('Failed request', { error });
   
     return {
       statusCode: 403,

@@ -8,21 +8,23 @@ import { Tournament } from '@models';
 
 
 const tournamentsAccessor = new TournamentsAccessor();
-const logger = createLogger('getTournaments.handler');
+const logger = createLogger('getTournament.handler');
 
 const handler: ValidatedAPIGatewayProxyEvent<any> = async event => {
   logger.info('Started request', event);
 
-  const { status } = event.queryStringParameters;
+  const { tournamentId } = event.pathParameters;
 
   try {
-    const tournaments: Tournament[] = await tournamentsAccessor.getTournamentsByStatus(status)
+    const tournament: Tournament = await tournamentsAccessor.getTournament(
+      tournamentId
+    );
 
-    logger.info('Completed request', tournaments);
+    logger.info('Completed request', tournament);
 
     return {
       statusCode: 200,
-      body: JSON.stringify(tournaments),
+      body: JSON.stringify(tournament),
     };
   } catch (error) {
     logger.error('Failed request', { error });

@@ -3,9 +3,11 @@ import type { AWS } from '@serverless/typescript';
 import {
   getUser,
   createUser,
+  getTournament,
   getTournaments,
   createTournament,
-  getTournamentPlayersData,
+  getTournamentPlayerRegistry,
+  getTournamentPlayersRegistryByPasskey,
   registerPlayerToTournament,
   // unregisterPlayerFromTournament,
   openTournament,
@@ -54,18 +56,25 @@ const serverlessConfiguration: AWS = {
       TOURNAMENT_PLAYERS_PASSKEY_INDEX_NAME: 'TournamentPlayersPasskeysIndex-${self:provider.stage}',
       TOURNAMENT_PLAYERS_WINS_INDEX_NAME: 'TournamentPlayersWinsIndex-${self:provider.stage}',
       TOURNAMENT_PLAYERS_STATUS_INDEX_NAME: 'TournamentPlayersStatusIndex-${self:provider.stage}',
+      TOURNAMENT_PLAYER_USER_ID_STATUS_INDEX_NAME: 'TournamentPlayerUserIdStatusIndex-${self:provider.stage}',
       MATCHES_TABLE_NAME: 'Matches-${self:provider.stage}',
       MATCHES_PLAYER1_INDEX_NAME: 'MatchesPlayer1Index-${self:provider.stage}',
       MATCHES_PLAYER2_INDEX_NAME: 'MatchesPlayer2Index-${self:provider.stage}',
+      APP_STAGE: '${self:provider.stage}',
+      WEBSOCKETS_API_ID: {
+        Ref: 'WebsocketsApi',
+      },
     },
     lambdaHashingVersion: '20201221',
   },
   functions: {
     getUser,
     createUser,
+    getTournament,
     getTournaments,
     createTournament,
-    getTournamentPlayersData,
+    getTournamentPlayerRegistry,
+    getTournamentPlayersRegistryByPasskey,
     registerPlayerToTournament,
     // unregisterPlayerFromTournament,
     openTournament,
@@ -257,6 +266,22 @@ const serverlessConfiguration: AWS = {
                 {
                   AttributeName: 'playerPasskey',
                   KeyType: 'HASH',
+                },
+              ],
+              Projection: {
+                ProjectionType: 'ALL',
+              },
+            },
+            {
+              IndexName: '${self:provider.environment.TOURNAMENT_PLAYER_USER_ID_STATUS_INDEX_NAME}',
+              KeySchema: [
+                {
+                  AttributeName: 'playerUserId',
+                  KeyType: 'HASH',
+                },
+                {
+                  AttributeName: 'playerStatus',
+                  KeyType: 'RANGE',
                 },
               ],
               Projection: {
