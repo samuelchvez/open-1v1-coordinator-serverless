@@ -19,14 +19,15 @@ export default {
     {
       Effect: 'Allow',
       Action: [
-        'dynamodb:UpdateItem',
+        'dynamodb:Query',
       ],
-      Resource: 'arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TOURNAMENT_PLAYERS_TABLE_NAME}',
+      Resource: 'arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TOURNAMENT_PLAYERS_TABLE_NAME}/index/${self:provider.environment.TOURNAMENT_PLAYERS_WINS_INDEX_NAME}',
     },
     {
       Effect: 'Allow',
       Action: [
         'dynamodb:GetItem',
+        'dynamodb:UpdateItem',
       ],
       Resource: 'arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TOURNAMENTS_TABLE_NAME}',
     },
@@ -43,6 +44,27 @@ export default {
         'dynamodb:GetItem',
       ],
       Resource: 'arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.USERS_TABLE_NAME}',
+    },
+    {
+      Effect: 'Allow',
+      Action: [
+        'dynamodb:Query',
+      ],
+      Resource: 'arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.MATCHES_TABLE_NAME}/index/${self:provider.environment.MATCHES_STATUS_INDEX_NAME}',
+    },
+    {
+      Effect: 'Allow',
+      Action: [
+        'dynamodb:UpdateItem',
+      ],
+      Resource: 'arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TOURNAMENT_PLAYERS_TABLE_NAME}',
+    },
+    {
+      Effect: 'Allow',
+      Action: [
+        'dynamodb:Query',
+      ],
+      Resource: 'arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.MATCHES_TABLE_NAME}',
     },
     {
       Effect: 'Allow',

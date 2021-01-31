@@ -13,7 +13,7 @@ const tournamentPlayersAccessor = new TournamentPlayersAccessor();
 const logger = createLogger('disconnect.handler');
 
 const handler: ValidatedAPIGatewayProxyEvent<void> = async event => {
-  logger.info('Started request', event);
+  logger.info('Started request ', event);
   const { requestContext: { connectionId } } = event;
 
 

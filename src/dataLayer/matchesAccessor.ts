@@ -13,6 +13,7 @@ export class MatchesAccessor {
   constructor(
     private readonly docClient: DocumentClient = new XAWS.DynamoDB.DocumentClient(),
     private readonly matchesTable = process.env.MATCHES_TABLE_NAME,
+    private readonly matchesStatusIndex = process.env.MATCHES_STATUS_INDEX_NAME,
     private readonly matchesPlayer1Index = process.env.MATCHES_PLAYER1_INDEX_NAME,
     private readonly matchesPlayer2Index = process.env.MATCHES_PLAYER2_INDEX_NAME,
   ) {}
@@ -166,5 +167,30 @@ export class MatchesAccessor {
 
       throw error;
     }
+  }
+
+  async getTournamentMatchesByStatus(
+    tournamentId: string,
+    status: string
+  ): Promise<Match[]> {
+    logger.info(
+      'Getting matches by player and status',
+      { tournamentId, status },
+    );
+
+    const { Items } = await this.docClient.query({
+      TableName: this.matchesTable,
+      IndexName: this.matchesStatusIndex,
+      KeyConditionExpression: 'tournamentId = :tournamentId AND #st = :st',
+      ExpressionAttributeValues: {
+        ':tournamentId': tournamentId,
+        ':st': status,
+      },
+      ExpressionAttributeNames: {
+        '#st': 'status',
+      }
+    }).promise();
+
+    return Items as Match[];
   }
 }

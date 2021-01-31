@@ -63,6 +63,7 @@ const serverlessConfiguration: AWS = {
       TOURNAMENT_PLAYERS_STATUS_INDEX_NAME: 'TournamentPlayersStatusIndex-${self:provider.stage}',
       TOURNAMENT_PLAYER_USER_ID_STATUS_INDEX_NAME: 'TournamentPlayerUserIdStatusIndex-${self:provider.stage}',
       MATCHES_TABLE_NAME: 'Matches-${self:provider.stage}',
+      MATCHES_STATUS_INDEX_NAME: 'MatchesSstatusIndex-${self:provider.stage}',
       MATCHES_PLAYER1_INDEX_NAME: 'MatchesPlayer1Index-${self:provider.stage}',
       MATCHES_PLAYER2_INDEX_NAME: 'MatchesPlayer2Index-${self:provider.stage}',
       APP_STAGE: '${self:provider.stage}',
@@ -400,6 +401,24 @@ const serverlessConfiguration: AWS = {
                 ProjectionType: 'ALL',
               },
             },
+          ],
+          LocalSecondaryIndexes: [
+            {
+              IndexName: '${self:provider.environment.MATCHES_STATUS_INDEX_NAME}',
+              KeySchema: [
+                {
+                  AttributeName: 'tournamentId',
+                  KeyType: 'HASH',
+                },
+                {
+                  AttributeName: 'status',
+                  KeyType: 'RANGE',
+                },
+              ],
+              Projection: {
+                ProjectionType: 'ALL',
+              },
+            }
           ],
         },
       },

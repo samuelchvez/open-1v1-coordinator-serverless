@@ -17,7 +17,7 @@ export class TournamentPlayersAccessor {
     private readonly tournamentPlayersPasskeyIndex = process.env.TOURNAMENT_PLAYERS_PASSKEY_INDEX_NAME,
     private readonly tournamentPlayerUserIdStatusIndex = process.env.TOURNAMENT_PLAYER_USER_ID_STATUS_INDEX_NAME,
     private readonly tournamentPlayerssStatusIndex = process.env.TOURNAMENT_PLAYERS_STATUS_INDEX_NAME,
-    // private readonly tournamentPlayerssWinsIndex = process.env.TOURNAMENT_PLAYERS_WINS_INDEX_NAME,
+    private readonly tournamentPlayerssWinsIndex = process.env.TOURNAMENT_PLAYERS_WINS_INDEX_NAME,
   ) {}
 
   async getTournamentPlayerRegistry(tournamentId: string, playerUserId: string): Promise<TournamentPlayerRegistry> {
@@ -37,6 +37,24 @@ export class TournamentPlayersAccessor {
 
     logger.error('Tournament player registry not found');
     throw new Error('Tournament player registry not found');
+  }
+
+  async getTournamentPlayersRegisters(tournamentId: string): Promise<TournamentPlayerRegistry[]> {
+    logger.info(
+      'Getting all tournament player registers',
+      { tournamentId },
+    );
+
+    const { Items } : any = await this.docClient.query({
+      TableName: this.tournamentPlayersTable,
+      IndexName: this.tournamentPlayerssWinsIndex,
+      KeyConditionExpression: 'tournamentId = :tournamentId',
+      ExpressionAttributeValues: {
+        ':tournamentId': tournamentId,
+      }
+    }).promise();
+
+    return Items as TournamentPlayerRegistry[];
   }
 
   async getTournamentPlayerRegistryByPasskey(playerPasskey: string): Promise<TournamentPlayerRegistry> {

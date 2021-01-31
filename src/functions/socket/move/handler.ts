@@ -11,8 +11,10 @@ import { MatchesAccessor } from '@dataLayer/matchesAccessor';
 import Match, * as fromMatchModel from '@models/Match';
 import * as games from '@games';
 import * as wsMatchesActions from '@wsactions/matches';
+import * as wsTournamentsActions from '@wsactions/tournaments';
 import { Tournament, TournamentPlayerRegistry } from '@models';
 import * as fromTournamentPlayerRegistryModel from '@models/TournamentPlayerRegistry';
+import * as fromTournamentModel from '@models/Tournament';
 
 
 const tournamentPlayerRegistryAccessor = new TournamentPlayersAccessor();
@@ -88,6 +90,31 @@ const handleCompletion = async ({
       match.matchId,
       updatedMatchAttributes,
     ),
+  ]);
+
+  const [ createdMatches, ongoingMatches ] = await Promise.all([
+    matchesAccessor.getTournamentMatchesByStatus(
+      tournament.tournamentId,
+      fromMatchModel.STATUS.created,
+    ),
+    matchesAccessor.getTournamentMatchesByStatus(
+      tournament.tournamentId,
+      fromMatchModel.STATUS.ongoing,
+    )
+  ]);
+
+  const tournamentHasFinished = createdMatches.length === 0
+    && ongoingMatches.length === 0;
+
+  if (tournamentHasFinished) {
+    tournament = await tournamentsAccessor.updateTournamentStatus(
+      tournament.tournamentId,
+      fromTournamentModel.STATUS.completed,
+    );
+  }
+
+  // Notify match completion
+  await Promise.all([
     webSocketAccessor.sendMessage(
       winnerData.connectionId,
       winnerAction(
@@ -95,7 +122,7 @@ const handleCompletion = async ({
         {
           ...match,
           ...updatedMatchAttributes,
-        }
+        },
       ),
     ),
     webSocketAccessor.sendMessage(
@@ -109,6 +136,37 @@ const handleCompletion = async ({
       ),
     ),
   ]);
+
+  if (tournamentHasFinished) {
+    const resultRegistries = await tournamentPlayerRegistryAccessor.getTournamentPlayersRegisters(
+      tournament.tournamentId
+    );
+  
+    const sortedUsers = await Promise.all(
+      resultRegistries.map(
+        registry => usersAccessor.getUser(registry.playerUserId),
+      )
+    );
+  
+    const results = resultRegistries.map(
+      (registry, index) => ({
+        ...registry,
+        nickname: sortedUsers[index].nickname,
+      }),
+    );
+  
+    await Promise.all(
+      sortedUsers.map(
+        user => webSocketAccessor.sendMessage(
+          user.connectionId,
+          wsTournamentsActions.notifyTournamentCompletion(
+            tournament,
+            results,
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 const handler: ValidatedAPIGatewayProxyEvent<void> = async event => {

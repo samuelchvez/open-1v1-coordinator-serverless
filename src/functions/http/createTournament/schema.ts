@@ -10,12 +10,8 @@ export default {
     gameId: {
       type: 'string',
     },
-    rounds: {
-      type: 'number',
-    },
   },
-  required: ['title', 'gameId', 'rounds'],
-  additionalProperties: false,
+  required: ['title', 'gameId'],
 } as const;
 
 export interface createTournamentRequestBody {

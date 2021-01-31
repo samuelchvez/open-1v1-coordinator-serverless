@@ -27,7 +27,7 @@ const matchesAccessor = new MatchesAccessor();
 const logger = createLogger('startTournament.handler');
 
 const handler: ValidatedAPIGatewayProxyEvent<void> = async event => {
-  logger.info('Started request', event);
+  logger.info('Started request ', event);
 
   const { headers } = event;
   const { tournamentId } = event.pathParameters;
