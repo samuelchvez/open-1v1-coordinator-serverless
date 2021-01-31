@@ -26,6 +26,14 @@ export default {
     {
       Effect: 'Allow',
       Action: [
+        'dynamodb:PutItem',
+        'dynamodb:UpdateItem',
+      ],
+      Resource: 'arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.MATCHES_TABLE_NAME}',
+    },
+    {
+      Effect: 'Allow',
+      Action: [
         'execute-api:ManageConnections'
       ],
       Resource: {

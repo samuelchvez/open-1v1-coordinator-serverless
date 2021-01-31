@@ -6,7 +6,9 @@
       "@models/*": ["src/models/*"],
       "@models": ["src/models/index.ts"],
       "@dataLayer/*": ["src/dataLayer/*"],
-      "@auth/*": ["src/functions/auth/*"]
+      "@auth/*": ["src/functions/auth/*"],
+      "@games/*": ["src/functions/games/*"],
+      "@games": ["src/games/index.ts"]
     }
   }
 }

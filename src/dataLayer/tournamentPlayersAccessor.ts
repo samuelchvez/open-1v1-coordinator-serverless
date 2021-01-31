@@ -178,10 +178,10 @@ export class TournamentPlayersAccessor {
     ] as TournamentPlayerRegistry[];
   }
 
-  async getTournamentActiveRegistries(tournamentId: string): Promise<TournamentPlayerRegistry[]> {
+  async getTournamentRegistriesByPlayerStatus(tournamentId: string, playerStatus: string): Promise<TournamentPlayerRegistry[]> {
     logger.info(
-      'Getting active tournament player registries',
-      { tournamentId },
+      'Getting tournament player registries by status',
+      { tournamentId, playerStatus },
     );
 
     const { Items } : any = await this.docClient.query({
@@ -190,9 +190,11 @@ export class TournamentPlayersAccessor {
       KeyConditionExpression: 'tournamentId = :tournamentId AND playerStatus = :playerStatus',
       ExpressionAttributeValues: {
         ':tournamentId': tournamentId,
-        ':playerStatus': fromTournamentPlayerRegistry.STATUS.ready,
+        ':playerStatus': playerStatus,
       },
     }).promise();
+
+    logger.info('Successfully retrieved player registries by status', { Items });
 
     return Items as TournamentPlayerRegistry[];
   }
