@@ -12,9 +12,11 @@ import * as fromTournamentModel from '@models/Tournament';
 import { WebsocketAccessor } from '@dataLayer/websocketAccessor';
 import { MatchesAccessor } from '@dataLayer/matchesAccessor';
 import * as fromTournamentPlayerRegistryModel from '@models/TournamentPlayerRegistry';
-import Match, * as fromMatchModel from '@models/Match';
+import * as fromMatchModel from '@models/Match';
 import { permutations } from '@libs/combinatorics';
 import * as games from '@games';
+import * as wsMatchesActions from '@wsactions/matches';
+import * as wsTournamentsActions from '@wsactions/tournaments';
 
 
 const tournamentsAccessor = new TournamentsAccessor();
@@ -77,6 +79,7 @@ const handler: ValidatedAPIGatewayProxyEvent<void> = async event => {
         )
       ).map((user, index) => ({
         connectionId: user.connectionId,
+        userId: user.userId,
         ...registries[index]
       }));
 
@@ -107,12 +110,9 @@ const handler: ValidatedAPIGatewayProxyEvent<void> = async event => {
         registriesWithConnections.map(
           ({ connectionId }) => websocketAccessor.sendMessage(
             connectionId,
-            {
-              type: 'tournament:started',
-              payload: { tournament: updatedTournament },
-            },
-          )
-        )
+            wsTournamentsActions.startTournament(updatedTournament),
+          ),
+        ),
       );
 
       // Make sure everyone starts playing!
@@ -122,6 +122,7 @@ const handler: ValidatedAPIGatewayProxyEvent<void> = async event => {
       for (let i = 0; i < matches.length; i++) {
         const match = matches[i];
         const p1Registry = regPermutations[i][0];
+        const p2Registry = regPermutations[i][1];
 
         const { player1Passkey, player2Passkey } = match;
         if (
@@ -131,8 +132,14 @@ const handler: ValidatedAPIGatewayProxyEvent<void> = async event => {
           playerScheduledToNotify.add(player1Passkey);
           playerScheduledToNotify.add(player2Passkey);
 
-          // Add player1 connection to match, for easy access
+          // Add player1 and player2 connection to match, for easy access
           match.player1ConnectionId = p1Registry.connectionId;
+          match.player2ConnectionId = p2Registry.connectionId;
+
+          // Add player1 and player2 userIds
+          match.player1UserId = p1Registry.userId;
+          match.player2UserId = p2Registry.userId;
+
           matchesToNotify.push(match);
         }
       }
@@ -148,23 +155,30 @@ const handler: ValidatedAPIGatewayProxyEvent<void> = async event => {
         ),
       );
 
+      // Update all registries of players playing (TODO: copy to setReady)
+      await Promise.all([
+        ...matchesToNotify.map(
+          match => tournamentPlayersAccessor.updateTournamentPlayerRegistryStatus(
+            match.tournamentId,
+            match.player1UserId,
+            fromTournamentPlayerRegistryModel.STATUS.inMatch,
+          ),
+        ),
+        ...matchesToNotify.map(
+          match => tournamentPlayersAccessor.updateTournamentPlayerRegistryStatus(
+            match.tournamentId,
+            match.player2UserId,
+            fromTournamentPlayerRegistryModel.STATUS.inMatch,
+          ),
+        ),
+      ]);
+
       // Notify selected matches to start playing!
       await Promise.all(
         matchesToNotify.map(
           ({ player1ConnectionId, ...match }) => websocketAccessor.sendMessage(
             player1ConnectionId,
-            {
-              type: 'match:move_required',
-              payload: {
-                tournament: updatedTournament,
-                match: {
-                  tournamentId: match.tournamentId,
-                  matchId: match.matchId,
-                  gameState: match.gameState,
-                  nextTurn: match.nextTurn,
-                },
-              },
-            },
+            wsMatchesActions.requestMovement(updatedTournament, match),
           )
         )
       );

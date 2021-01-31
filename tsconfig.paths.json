@@ -3,6 +3,7 @@
     "baseUrl": ".",
     "paths": {
       "@libs/*": ["src/libs/*"],
+      "@wsactions/*": ["src/wsactions/*"],
       "@models/*": ["src/models/*"],
       "@models": ["src/models/index.ts"],
       "@dataLayer/*": ["src/dataLayer/*"],

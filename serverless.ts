@@ -10,6 +10,7 @@ import {
   getTournamentPlayersRegistryByPasskey,
   registerPlayerToTournament,
   // unregisterPlayerFromTournament,
+  // TODO: get closed tournament results
   openTournament,
   startTournament,
 } from './src/functions/http';

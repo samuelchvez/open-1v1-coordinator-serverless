@@ -8,13 +8,11 @@ import { UsersAccessor } from '@dataLayer/usersAccessor';
 import { TournamentsAccessor } from '@dataLayer/tournamentsAccessor';
 import * as fromTournamentModel from '@models/Tournament';
 import * as fromTournamentPlayerRegistryModel from '@models/TournamentPlayerRegistry';
-import { WebsocketAccessor } from '@dataLayer/websocketAccessor';
 
 
 const tournamentPlayerRegistryAccessor = new TournamentPlayersAccessor();
 const usersAccessor = new UsersAccessor();
 const tournamentsAccessor = new TournamentsAccessor();
-const webSocketAccessor = new WebsocketAccessor()
 const logger = createLogger('connect.handler');
 
 const handler: ValidatedAPIGatewayProxyEvent<void> = async event => {
@@ -45,16 +43,6 @@ const handler: ValidatedAPIGatewayProxyEvent<void> = async event => {
         fromTournamentPlayerRegistryModel.STATUS.ready
       );
 
-      // await webSocketAccessor.sendMessage(
-      //   connectionId,
-      //   {
-      //     type: 'tournament:joined',
-      //     payload: {
-      //       tournament,
-      //     },
-      //   },
-      // );
-  
       logger.info('Completed request', { playerPasskey });
   
       return wsutils.success('nenecudazo');

@@ -19,4 +19,5 @@ export const PLAYERS = {
   player1: 1,
   player2: 2,
   noPlayer: 0,
+  bothPlayers: -1,
 };

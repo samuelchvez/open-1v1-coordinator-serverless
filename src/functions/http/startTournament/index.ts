@@ -19,6 +19,13 @@ export default {
     {
       Effect: 'Allow',
       Action: [
+        'dynamodb:UpdateItem',
+      ],
+      Resource: 'arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TOURNAMENT_PLAYERS_TABLE_NAME}',
+    },
+    {
+      Effect: 'Allow',
+      Action: [
         'dynamodb:GetItem',
       ],
       Resource: 'arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.USERS_TABLE_NAME}',

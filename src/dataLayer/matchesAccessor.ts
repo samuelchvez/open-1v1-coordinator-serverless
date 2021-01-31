@@ -17,12 +17,12 @@ export class MatchesAccessor {
     private readonly matchesPlayer2Index = process.env.MATCHES_PLAYER2_INDEX_NAME,
   ) {}
 
-  async getMatch(matchId: string): Promise<Match> {
-    logger.info('Getting match', { matchId });
+  async getMatch(tournamentId: string, matchId: string): Promise<Match> {
+    logger.info('Getting match', { tournamentId, matchId });
 
     const { Item }: any = await this.docClient.get({
       TableName: this.matchesTable,
-      Key: { matchId },
+      Key: { tournamentId, matchId },
     }).promise();
 
     if (Item) {
@@ -35,7 +35,7 @@ export class MatchesAccessor {
     throw new Error('User not found');
   }
 
-  async getMatchesGByPlayerPasskeyAndStatus(playerPasskey: string, status: string): Promise<Match[]> {
+  async getMatchesByPlayerPasskeyAndStatus(playerPasskey: string, status: string): Promise<Match[]> {
     logger.info(
       'Getting matches by player and status',
       { playerPasskey, status },
@@ -100,7 +100,6 @@ export class MatchesAccessor {
 
       throw error;
     }
-
   }
 
   async updateMatch(
@@ -116,7 +115,7 @@ export class MatchesAccessor {
       gameState?: string,
       nextTurn?: number,
       winner?: number,
-    }): Promise<void> {
+    }): Promise<Match> {
     logger.info(
       'Updating Match',
       { status, gameState, nextTurn, winner },
@@ -148,7 +147,7 @@ export class MatchesAccessor {
     }
 
     try {
-      await this.docClient.update({
+      const { Attributes } = await this.docClient.update({
         TableName: this.matchesTable,
         Key: { tournamentId, matchId },
         UpdateExpression: `set ${updateExpression.join(',')}`,
@@ -156,10 +155,12 @@ export class MatchesAccessor {
         ExpressionAttributeNames: Object.keys(nameExpression).length > 0
           ? nameExpression
           : undefined,
-        ReturnValues: 'NONE',
+        ReturnValues: 'ALL_NEW',
       }).promise();
 
       logger.info('Match successfully updated');
+      
+      return Attributes as Match;
     } catch (error) {
       logger.error('Match could not be updated', { error });
 
