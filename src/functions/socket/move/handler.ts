@@ -72,16 +72,16 @@ const handleCompletion = async ({
     tournamentPlayerRegistryAccessor.updateTournamentPlayerRegistryResults(
       tournament.tournamentId,
       winnerData.registry.playerUserId,
-      winnerData.registry.playerWins + 1,
+      winnerData.registry.playerWins + (isDraw ? 0 : 1),
       winnerData.registry.playerLoses,
-      winnerData.registry.playerDraws,
+      winnerData.registry.playerDraws + (isDraw ? 1 : 0),
     ),
     tournamentPlayerRegistryAccessor.updateTournamentPlayerRegistryResults(
       tournament.tournamentId,
       loserData.registry.playerUserId,
       loserData.registry.playerWins,
-      loserData.registry.playerLoses + 1,
-      loserData.registry.playerDraws,
+      loserData.registry.playerLoses + (isDraw ? 0 : 1),
+      loserData.registry.playerDraws + (isDraw ? 1 : 0),
     ),
     matchesAccessor.updateMatch(
       tournament.tournamentId,
@@ -113,6 +113,8 @@ const handleCompletion = async ({
 
 const handler: ValidatedAPIGatewayProxyEvent<void> = async event => {
   logger.info('Started request', event);
+
+  // TODO: save match moves
 
   const selfConnectionId = event.requestContext.connectionId;
   const {

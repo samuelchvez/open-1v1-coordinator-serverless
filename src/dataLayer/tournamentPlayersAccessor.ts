@@ -88,14 +88,14 @@ export class TournamentPlayersAccessor {
     tournamentId: string,
     playerUserId: string,
     playerStatus: string,
-  ): Promise<void> {
+  ): Promise<TournamentPlayerRegistry> {
     logger.info(
       'Updating Tournament Player Registry status',
       { tournamentId, playerUserId, playerStatus },
     );
 
     try {
-      await this.docClient.update({
+      const { Attributes } = await this.docClient.update({
         TableName: this.tournamentPlayersTable,
         Key: { tournamentId, playerUserId },
         UpdateExpression: 'set playerStatus = :playerStatus',
@@ -106,6 +106,8 @@ export class TournamentPlayersAccessor {
       }).promise();
 
       logger.info('Tournament Player Registry successfully updated');
+
+      return Attributes as TournamentPlayerRegistry;
     } catch (error) {
       logger.error('Tournament Player Registry could not be updated', { error });
 
